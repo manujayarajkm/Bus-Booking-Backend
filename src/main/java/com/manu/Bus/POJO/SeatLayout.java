@@ -8,10 +8,11 @@ public class SeatLayout {
 	private int seatNo;
 	private String seatStatus;
 	private String busType;
+	private int destValue;
 	public SeatLayout() {
 		super();
 	}
-	public SeatLayout(int busId, String busName, float bus_start_time, float reachTime, int seatNo, String seatStatus,String busType) {
+	public SeatLayout(int busId, String busName, float bus_start_time, float reachTime, int seatNo, String seatStatus,String busType,int destValue) {
 		super();
 		this.busId = busId;
 		this.busName = busName;
@@ -20,6 +21,7 @@ public class SeatLayout {
 		this.seatNo = seatNo;
 		this.seatStatus = seatStatus;
 		this.busType=busType;
+		this.destValue=destValue;
 	}
 	public int getBusId() {
 		return busId;
@@ -62,6 +64,12 @@ public class SeatLayout {
 	}
 	public void setBusType(String busType) {
 		this.busType = busType;
+	}
+	public int getDestValue() {
+		return destValue;
+	}
+	public void setDestValue(int destValue) {
+		this.destValue = destValue;
 	}
 	@Override
 	public String toString() {

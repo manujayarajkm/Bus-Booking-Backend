@@ -9,6 +9,6 @@ import com.manu.Bus.POJO.SeatLayout;
 public interface TransactionService {
 
 	public List<Bus> getAvailableBusses(String source,String destination)throws SQLException,ClassNotFoundException; 
-	public List<SeatLayout> getSeatStatus(int busId)throws SQLException,ClassNotFoundException; 
+	public List<SeatLayout> getSeatStatus(int busId,int  sourceValue)throws SQLException,ClassNotFoundException; 
 
 }

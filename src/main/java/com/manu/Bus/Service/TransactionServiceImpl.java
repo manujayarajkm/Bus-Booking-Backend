@@ -24,9 +24,10 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	@Override
-	public List<SeatLayout> getSeatStatus(int busId) throws SQLException, ClassNotFoundException {
+	public List<SeatLayout> getSeatStatus(int busId,int  sourceValue) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
-		return transactionDAO.getSeatStatus(busId);
+	
+		return transactionDAO.getSeatStatus(busId,sourceValue);
 	}
 
 }

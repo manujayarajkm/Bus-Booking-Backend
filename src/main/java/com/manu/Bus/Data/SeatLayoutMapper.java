@@ -20,6 +20,7 @@ public class SeatLayoutMapper implements RowMapper<SeatLayout> {
 		seatLayout.setBus_start_time(rs.getFloat(4));
 		seatLayout.setSeatNo(rs.getInt(5));
 		seatLayout.setSeatStatus(rs.getString(6));
+		seatLayout.setDestValue(rs.getInt(7));
 		return seatLayout;
 	}
 

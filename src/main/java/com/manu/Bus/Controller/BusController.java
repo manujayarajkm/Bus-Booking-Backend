@@ -26,10 +26,10 @@ public class BusController {
 		System.out.println("Got the call");
 		return transactionService.getAvailableBusses(source, dest);
 	}
-	@RequestMapping(value="/getSeatLayout/{busId}",method=RequestMethod.GET)
-	public List<SeatLayout> getSeatLayout(@PathVariable int busId) throws SQLException, ClassNotFoundException {
+	@RequestMapping(value="/getSeatLayout/{busId}/{destValue}",method=RequestMethod.GET)
+	public List<SeatLayout> getSeatLayout(@PathVariable int busId,@PathVariable int destValue) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		System.out.println("Got the call");
-		return transactionService.getSeatStatus(busId);
+		return transactionService.getSeatStatus(busId,destValue);
 	}
 }
