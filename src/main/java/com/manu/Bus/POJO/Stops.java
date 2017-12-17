@@ -6,11 +6,11 @@ public class Stops {
 	private String stopName;
 	private int stopValue;
 	private int distanceFromorigin;
-	private int timeWROrigin;
+	private float timeWROrigin;
 	public Stops() {
 		super();
 	}
-	public Stops(int stopId, int routeId, String stopName, int stopValue, int distanceFromorigin, int timeWROrigin) {
+	public Stops(int stopId, int routeId, String stopName, int stopValue, int distanceFromorigin, float timeWROrigin) {
 		super();
 		this.stopId = stopId;
 		this.routeId = routeId;
@@ -49,7 +49,7 @@ public class Stops {
 	public void setDistanceFromorigin(int distanceFromorigin) {
 		this.distanceFromorigin = distanceFromorigin;
 	}
-	public int getTimeWROrigin() {
+	public float getTimeWROrigin() {
 		return timeWROrigin;
 	}
 	public void setTimeWROrigin(int timeWROrigin) {

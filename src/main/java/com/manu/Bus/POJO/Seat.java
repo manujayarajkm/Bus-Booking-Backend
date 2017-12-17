@@ -1,16 +1,16 @@
 package com.manu.Bus.POJO;
 
-public class Seat_Status {
+public class Seat {
 	
 	private int statusId;
 	private int seatId;
 	private int busId;
 	private int seatNo;
 	private String seatStatus;
-	public Seat_Status() {
+	public Seat() {
 		super();
 	}
-	public Seat_Status(int statusId, int seatId, int busId, int seatNo, String seatStatus) {
+	public Seat(int statusId, int seatId, int busId, int seatNo, String seatStatus) {
 		super();
 		this.statusId = statusId;
 		this.seatId = seatId;
