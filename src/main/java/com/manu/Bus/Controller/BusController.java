@@ -1,6 +1,12 @@
 package com.manu.Bus.Controller;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +32,14 @@ public class BusController {
 		System.out.println("Got the call");
 		return transactionService.getAvailableBusses(source, dest);
 	}
-	@RequestMapping(value="/getSeatLayout/{busId}/{destValue}",method=RequestMethod.GET)
-	public List<SeatLayout> getSeatLayout(@PathVariable int busId,@PathVariable int destValue) throws SQLException, ClassNotFoundException {
+	@RequestMapping(value="/getSeatLayout/{busId}/{destValue}/{travelDate}",method=RequestMethod.GET)
+	public List<SeatLayout> getSeatLayout(@PathVariable int busId,@PathVariable int destValue,@PathVariable String travelDate) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
-		System.out.println("Got the call");
-		return transactionService.getSeatStatus(busId,destValue);
+		
+		
+		LocalDate localDate = LocalDate.parse(travelDate); 
+		
+		System.out.println("Got the call "+localDate);
+		return transactionService.getSeatStatus(busId,destValue,localDate);
 	}
 }

@@ -3,6 +3,7 @@ package com.manu.Bus.Data;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +27,8 @@ public class TransactionDAOImpl implements TransactionDAO {
 	private final static String GETBUSIDS="SELECT bus_id FROM bus_and_route where route_id=?";
 	private final static String GETSEATLAYOUT="select bus.bus_id,bus.bus_name,bus.bus_type,bus.`bus_start_time`,seat.`seat_no`,seat.`seat_status`,seat.booked_value from bus INNER JOIN seat ON seat.`bus_id`=bus.bus_id and bus.`bus_id`=?;";
 	private final static String GETBUSSES="SELECT * FROM bus where route_id=? && bus_start_time>?";
-
+	private final static String GETNOOFSEATS="SELECT count(seat_no) FROM seat where bus_id=?";
+	private final static String GETSEATSTATUS="select `booked_seats_id` from booked_seats where bus_id=? and `seat_no`=? and `travel_date`=?";
 
 
 	@Autowired
@@ -83,12 +86,42 @@ public class TransactionDAOImpl implements TransactionDAO {
 	}
 
 	@Override
-	public List<SeatLayout> getSeatStatus(int busId,int sourceValue) throws SQLException, ClassNotFoundException {
+	public List<SeatLayout> getSeatStatus(int busId,int sourceValue,LocalDate travelDate) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
+		
+		int noOfSeats=jdbcTemplate.queryForObject(GETNOOFSEATS, new Object[]{busId},Integer.class);
+		List<Integer> seats=new ArrayList();
+		List<Integer> availSeats=new ArrayList();
+		System.out.println("no of seats "+noOfSeats);
+		for(int i=1;i<=noOfSeats;i++){
+			System.out.println("Inside for loop "+i);
+			try{
+				System.out.println("Inside try");
+				System.out.println("Date is "+travelDate);
+			int seatId=jdbcTemplate.queryForObject(GETSEATSTATUS, new Object[]{busId,i,travelDate},Integer.class);
+			System.out.println(seatId);
+			seats.add(i);
+			}catch(EmptyResultDataAccessException e){
+				System.out.println("Inside catch");
+				System.out.println("id not exist");
+				availSeats.add(i);
+
+			}
+		}
+		System.out.println("booked seats array "+seats);
+		System.out.println("available seats array "+availSeats);
 		List<SeatLayout> seatLayout=jdbcTemplate.query(GETSEATLAYOUT,new SeatLayoutMapper(),busId);
 		for(int i=0;i<seatLayout.size();i++){
 			if(seatLayout.get(i).getDestValue()<=sourceValue){
 				seatLayout.get(i).setSeatStatus("available");
+			}
+		}
+		for(int j=0;j<seatLayout.size();j++){
+			for(int i=0;i<seats.size();i++){
+			if(seatLayout.get(j).getSeatNo()==seats.get(i)){
+				System.out.println(" seatlayout "+j +"seats "+i);
+				seatLayout.get(j).setSeatStatus("booked");
+			}
 			}
 		}
 		return seatLayout;

@@ -1,6 +1,7 @@
 package com.manu.Bus.Service;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,10 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	@Override
-	public List<SeatLayout> getSeatStatus(int busId,int  sourceValue) throws SQLException, ClassNotFoundException {
+	public List<SeatLayout> getSeatStatus(int busId,int  sourceValue,LocalDate travelDate) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 	
-		return transactionDAO.getSeatStatus(busId,sourceValue);
+		return transactionDAO.getSeatStatus(busId,sourceValue,travelDate);
 	}
 
 }
