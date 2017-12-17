@@ -1,9 +1,11 @@
-package com.manu.Bus.POJO;
+package com.manu.Bus.Data;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
+
+import com.manu.Bus.POJO.Stops;
 
 public class StopMapper implements RowMapper<Stops> {
 

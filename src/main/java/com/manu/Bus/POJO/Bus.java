@@ -7,10 +7,11 @@ public class Bus {
 	private int noOfSeats;
 	private float startTime;
 	private double contactNo;
+	int routeId;
 	public Bus() {
 		super();
 	}
-	public Bus(int busId, String busName, String busType, int noOfSeats, float startTime, double contactNo) {
+	public Bus(int busId, String busName, String busType, int noOfSeats, float startTime, double contactNo,int routeId) {
 		super();
 		this.busId = busId;
 		this.busName = busName;
@@ -18,6 +19,7 @@ public class Bus {
 		this.noOfSeats = noOfSeats;
 		this.startTime = startTime;
 		this.contactNo = contactNo;
+		this.routeId=routeId;
 	}
 	public int getBusId() {
 		return busId;
@@ -54,6 +56,12 @@ public class Bus {
 	}
 	public void setContactNo(double contactNo) {
 		this.contactNo = contactNo;
+	}
+	public int getRouteId() {
+		return routeId;
+	}
+	public void setRouteId(int routeId) {
+		this.routeId = routeId;
 	}
 	@Override
 	public String toString() {

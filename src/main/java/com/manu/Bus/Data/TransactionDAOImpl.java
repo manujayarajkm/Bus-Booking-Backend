@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.manu.Bus.POJO.Bus;
 import com.manu.Bus.POJO.SeatLayout;
-import com.manu.Bus.POJO.StopMapper;
 import com.manu.Bus.POJO.Stops;
 
 @Repository
@@ -17,16 +17,23 @@ public class TransactionDAOImpl implements TransactionDAO {
 	
 	private final static String GETSOURCEROUTES="SELECT route_id,stop_value FROM stops where stop_name=? ";
 	private final static String GETDESTROUTES="SELECT route_id,stop_value FROM stops where stop_name=?";
+	private final static String GETBUSIDS="SELECT bus_id FROM bus_and_route where route_id=?";
+	private final static String GETSEATLAYOUT="select bus.bus_id,bus.bus_name,bus.bus_type,bus.`bus_start_time`,seat.`seat_no`,seat.`seat_status` from bus INNER JOIN seat ON seat.`bus_id`=bus.bus_id and bus.`bus_id`=?;";
+	private final static String GETBUSSES="SELECT * FROM bus where route_id=?";
+
 
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
 	@Override
-	public List<SeatLayout> getAvailableBusses(String source, String destination)
+	public List<Bus> getAvailableBusses(String source, String destination)
 			throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		List<Integer> rIds=new ArrayList();
+		List<Integer> busIds=new ArrayList();
+		List<SeatLayout> seatLayout=new ArrayList();
+		List<Bus> bus=new ArrayList();
 		List<Stops> sourcestops=jdbcTemplate.query(GETSOURCEROUTES,new StopMapper(),source);
 		System.out.println(sourcestops);
 		List<Stops> deststops=jdbcTemplate.query(GETDESTROUTES,new StopMapper(),destination);
@@ -40,7 +47,37 @@ public class TransactionDAOImpl implements TransactionDAO {
 			}
 		}
 		System.out.println(rIds);
-		return null;
+//		for(int i=0;i<rIds.size();i++){
+//			System.out.println(rIds.get(i));
+//			int busId=jdbcTemplate.queryForObject(GETBUSIDS, new Object[]{rIds.get(i)},Integer.class);
+//			busIds.add(busId);
+//		}
+//		System.out.println(busIds);
+//		for(int i=0;i<busIds.size();i++){
+//			List<SeatLayout> seatLayout1=new ArrayList();
+//			seatLayout1=jdbcTemplate.query(GETSEATLAYOUT, new SeatLayoutMapper(),busIds.get(i));
+//			seatLayout.addAll(seatLayout1);
+//		}
+//		System.out.println(seatLayout);
+		for(int i=0;i<rIds.size();i++){
+			List<Bus> bus1=new ArrayList();
+			System.out.println(rIds.get(i));
+			bus1=jdbcTemplate.query(GETBUSSES, new BusMapper(),rIds.get(i));
+			System.out.println(bus1);
+			bus.addAll(bus1);
+		}
+		System.out.println(bus);
+		
+		
+		return bus;
+	}
+
+	@Override
+	public List<SeatLayout> getSeatStatus(int busId) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		
+		List<SeatLayout> seatLayout=jdbcTemplate.query(GETSEATLAYOUT,new SeatLayoutMapper(),busId);
+		return seatLayout;
 	}
 
 }

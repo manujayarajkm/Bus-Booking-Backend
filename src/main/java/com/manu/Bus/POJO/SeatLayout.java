@@ -7,10 +7,11 @@ public class SeatLayout {
 	private float reachTime;
 	private int seatNo;
 	private String seatStatus;
+	private String busType;
 	public SeatLayout() {
 		super();
 	}
-	public SeatLayout(int busId, String busName, float bus_start_time, float reachTime, int seatNo, String seatStatus) {
+	public SeatLayout(int busId, String busName, float bus_start_time, float reachTime, int seatNo, String seatStatus,String busType) {
 		super();
 		this.busId = busId;
 		this.busName = busName;
@@ -18,6 +19,7 @@ public class SeatLayout {
 		this.reachTime = reachTime;
 		this.seatNo = seatNo;
 		this.seatStatus = seatStatus;
+		this.busType=busType;
 	}
 	public int getBusId() {
 		return busId;
@@ -54,6 +56,12 @@ public class SeatLayout {
 	}
 	public void setSeatStatus(String seatStatus) {
 		this.seatStatus = seatStatus;
+	}
+	public String getBusType() {
+		return busType;
+	}
+	public void setBusType(String busType) {
+		this.busType = busType;
 	}
 	@Override
 	public String toString() {
