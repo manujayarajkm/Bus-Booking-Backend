@@ -52,8 +52,8 @@ public class Stops {
 	public float getTimeWROrigin() {
 		return timeWROrigin;
 	}
-	public void setTimeWROrigin(int timeWROrigin) {
-		this.timeWROrigin = timeWROrigin;
+	public void setTimeWROrigin(float f) {
+		this.timeWROrigin = f;
 	}
 	@Override
 	public String toString() {

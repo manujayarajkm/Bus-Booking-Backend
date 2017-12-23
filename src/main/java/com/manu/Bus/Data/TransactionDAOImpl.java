@@ -15,7 +15,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.manu.Bus.POJO.BookedSeatsMpper;
 import com.manu.Bus.POJO.Booked_Seats;
 import com.manu.Bus.POJO.Bus;
 import com.manu.Bus.POJO.SeatLayout;
@@ -24,8 +23,8 @@ import com.manu.Bus.POJO.Stops;
 @Repository
 public class TransactionDAOImpl implements TransactionDAO {
 	
-	private final static String GETSOURCEROUTES="SELECT route_id,stop_value FROM stops where stop_name=? ";
-	private final static String GETDESTROUTES="SELECT route_id,stop_value FROM stops where stop_name=?";
+	private final static String GETSOURCEROUTES="SELECT route_id,stop_value,distance_from_origin,time_from_origin FROM stops where stop_name=? ";
+	private final static String GETDESTROUTES="SELECT route_id,stop_value,distance_from_origin,time_from_origin FROM stops where stop_name=?";
 	private final static String GETBUSIDS="SELECT bus_id FROM bus_and_route where route_id=?";
 	private final static String GETSEATLAYOUT="select bus.bus_id,bus.bus_name,bus.bus_type,bus.`bus_start_time`,seat.`seat_no`,seat.`seat_status`,seat.booked_value from bus INNER JOIN seat ON seat.`bus_id`=bus.bus_id and bus.`bus_id`=?;";
 	private final static String GETBUSSES="SELECT * FROM bus where route_id=? && bus_start_time>?";
@@ -33,6 +32,12 @@ public class TransactionDAOImpl implements TransactionDAO {
 	private final static String GETSEATSTATUS="select `booked_seats_id` from booked_seats where bus_id=? and `seat_no`=? and `travel_date`=?";
 	private final static String GETBOOKEDSEATS="select * from booked_seats where bus_id=?";
 	private final static String GETBOOKEDSEATNO="select seat_no from booked_seats where bus_id=?";
+	private final static String GETSOURCETIME="select time_from_origin from stops where route_id=? && stop_name=?";
+	private final static String GETDESTTIME="select time_from_origin from stops where route_id=? && stop_name=?";
+	private final static String GETBUSTYPE="select bus_type from bus where bus_id=?";
+	private final static String GETSOURCEDIST="select distance_from_origin from stops where route_id=? && stop_name=?";
+	private final static String GETDESTDIST="select distance_from_origin from stops where route_id=? && stop_name=?";
+
 
 
 	@Autowired
@@ -54,7 +59,14 @@ public class TransactionDAOImpl implements TransactionDAO {
 		for(int i=0;i<sourcestops.size();i++){
 			for (int j=0;j<deststops.size();j++){
 				if(sourcestops.get(i).getRouteId()==deststops.get(j).getRouteId() && sourcestops.get(i).getStopValue()<deststops.get(j).getStopValue()){
+//					float duration=(deststops.get(j).getTimeWROrigin()-sourcestops.get(i).getTimeWROrigin());
+//					System.out.println("Time is "+duration);
+//					float reachtime=(deststops.get(j).getTimeWROrigin());
+//					System.out.println("Time is "+reachtime);
+//					float distance=(deststops.get(j).getDistanceFromorigin()-sourcestops.get(i).getDistanceFromorigin());
+//					System.out.println("Distance  is "+distance);
 					rIds.add(sourcestops.get(i).getRouteId());
+
 				}
 			}
 		}
@@ -80,8 +92,24 @@ public class TransactionDAOImpl implements TransactionDAO {
 			List<Bus> bus1=new ArrayList();
 			System.out.println(rIds.get(i));
 			bus1=jdbcTemplate.query(GETBUSSES, new BusMapper(),rIds.get(i),time);
+			System.out.println("before time "+bus1);
+			System.out.println("source is "+source);
+			System.out.println("destination is "+destination);
+			float sourceTime=jdbcTemplate.queryForObject(GETSOURCETIME, new Object[]{rIds.get(i),source},Float.class);
+			float destTime=jdbcTemplate.queryForObject(GETDESTTIME, new Object[]{rIds.get(i),destination},Float.class);
+			System.out.println("Source time "+sourceTime +"dest time "+destTime);
+			int sourceDist=jdbcTemplate.queryForObject(GETSOURCEDIST, new Object[]{rIds.get(i),source},Integer.class);
+			int destDist=jdbcTemplate.queryForObject(GETDESTDIST, new Object[]{rIds.get(i),destination},Integer.class);
+			int distance=destDist-sourceDist;
+			System.out.println("Source distance "+sourceDist +"dest distance "+destDist);
 			System.out.println(bus1);
 			bus.addAll(bus1);
+			String busType=bus.get(i).getBusType();
+			System.out.println("bus type "+busType);
+			int fare=calculateFare(busType,distance);
+			Float startTime=bus.get(i).getStartTime();
+			bus.get(i).setReachTime(startTime+destTime);
+			bus.get(i).setCost(fare);
 		}
 		System.out.println(bus);
 				
@@ -171,6 +199,36 @@ public class TransactionDAOImpl implements TransactionDAO {
 		}
 		
 		return seatLayout;
+	}
+
+	@Override
+	public int calculateFare(String busType, int distance) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		int baserate=0;
+		int rateWithKm=0;
+		int totalrate=0;
+		
+		switch(busType){
+		case "express":
+			baserate=150;
+			rateWithKm=10;
+			totalrate=baserate+(distance*rateWithKm);
+			break;
+		case "ac":
+			baserate=300;
+			rateWithKm=25;
+			totalrate=baserate+(distance*rateWithKm);
+			break;
+		case "superfast":
+			baserate=100;
+			rateWithKm=5;
+			totalrate=baserate+(distance*rateWithKm);
+			break;
+		default:
+			totalrate=0;
+			
+		}
+		return totalrate;
 	}
 
 }

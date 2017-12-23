@@ -16,6 +16,8 @@ public class StopMapper implements RowMapper<Stops> {
 		Stops stopsRow=new Stops();
 		stopsRow.setRouteId(rs.getInt(1));
 		stopsRow.setStopValue(rs.getInt(2));
+		stopsRow.setDistanceFromorigin(rs.getInt(3));
+		stopsRow.setTimeWROrigin(rs.getFloat(4));
 		return stopsRow;
 	}
 
