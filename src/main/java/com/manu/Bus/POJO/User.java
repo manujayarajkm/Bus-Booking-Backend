@@ -7,12 +7,12 @@ public class User {
 	private double userPhone;
 	private String username;
 	private String password;
-	private char gender;
+	private String gender;
 	private int age;
 	public User() {
 		super();
 	}
-	public User(int userid, String name, String email, double userPhone, String username, String password, char gender,
+	public User(int userid, String name, String email, double userPhone, String username, String password, String gender,
 			int age) {
 		super();
 		this.userid = userid;
@@ -60,10 +60,10 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public char getGender() {
+	public String getGender() {
 		return gender;
 	}
-	public void setGender(char gender) {
+	public void setGender(String gender) {
 		this.gender = gender;
 	}
 	public int getAge() {

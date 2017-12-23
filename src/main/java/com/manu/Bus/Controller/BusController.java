@@ -19,6 +19,7 @@ import com.manu.Bus.POJO.Bus;
 import com.manu.Bus.POJO.Seat;
 import com.manu.Bus.POJO.SeatLayout;
 import com.manu.Bus.Service.TransactionService;
+import com.manu.Bus.Service.UserService;
 
 @RestController
 @RequestMapping(value="/buscontroller")
@@ -26,6 +27,9 @@ public class BusController {
 	
 	@Autowired
 	TransactionService transactionService;
+	@Autowired
+	UserService userService;
+	
 	@RequestMapping(value="/getAvailableBussess/{source}/{dest}",method=RequestMethod.GET)
 	public List<Bus> getAvailableBussess(@PathVariable String source,@PathVariable String dest) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
@@ -41,5 +45,13 @@ public class BusController {
 		
 		System.out.println("Got the call "+localDate);
 		return transactionService.getSeatStatus(busId,destValue,localDate);
+	}
+	@RequestMapping(value="/registerUser/{name}/{email}/{phone}/{username}/{password}/{gender}/{age}",method=RequestMethod.GET)
+	public String registerUser(@PathVariable String name,@PathVariable String email,@PathVariable double phone,@PathVariable String username,@PathVariable String password,@PathVariable String gender,@PathVariable int age) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		
+		
+		System.out.println("Got the call ");
+		return userService.registerUser(name, email, phone, username, password, gender, age);
 	}
 }
