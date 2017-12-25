@@ -37,6 +37,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 	private final static String GETBUSTYPE="select bus_type from bus where bus_id=?";
 	private final static String GETSOURCEDIST="select distance_from_origin from stops where route_id=? && stop_name=?";
 	private final static String GETDESTDIST="select distance_from_origin from stops where route_id=? && stop_name=?";
+	private final static String GETDESTVALUE="select stop_value from stops where stop_name=? && route_id=?";
 
 
 
@@ -229,6 +230,13 @@ public class TransactionDAOImpl implements TransactionDAO {
 			
 		}
 		return totalrate;
+	}
+
+	@Override
+	public int destvalue(String destination,int routeId) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		int destValue=jdbcTemplate.queryForObject(GETDESTVALUE, new Object[]{destination,routeId},Integer.class);
+		return destValue;
 	}
 
 }
