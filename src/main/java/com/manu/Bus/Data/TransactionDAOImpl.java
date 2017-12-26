@@ -38,7 +38,8 @@ public class TransactionDAOImpl implements TransactionDAO {
 	private final static String GETSOURCEDIST="select distance_from_origin from stops where route_id=? && stop_name=?";
 	private final static String GETDESTDIST="select distance_from_origin from stops where route_id=? && stop_name=?";
 	private final static String GETDESTVALUE="select stop_value from stops where stop_name=? && route_id=?";
-
+	private final static String ADDBOOKING="insert into booking (user_id,route_id,bus_id,no_of_seats_booked,source,destination,bus_type,total_amount,booking_date) values(?,?,?,?,?,?,?,?,?)";
+	private final static String UPDATEBOOKEDSEATS="insert into booked_seats (user_id,seat_no,bus_id,travel_date,dest_value) values(?,?,?,?,?)";
 
 
 	@Autowired
@@ -154,7 +155,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 			if(seats.get(i)==booked_seats.get(j).getSeatNo()){
 				System.out.println("found seat number match " +booked_seats.get(j).getSeatNo());
 				if(booked_seats.get(j).getDestValue()<=sourceValue){
-					System.out.println("found a possible vaccant seat "+booked_seats.get(j).getSeatNo());
+					System.out.println("found a possible vaccant seat "+booked_seats.get(j).getSeatNo()+booked_seats.get(j).getDestValue()+sourceValue);
 				//seatLayout.get(i).setSeatStatus("available");
 					willAvailable.add(seats.get(i));
 			}
@@ -237,6 +238,26 @@ public class TransactionDAOImpl implements TransactionDAO {
 		// TODO Auto-generated method stub
 		int destValue=jdbcTemplate.queryForObject(GETDESTVALUE, new Object[]{destination,routeId},Integer.class);
 		return destValue;
+	}
+
+	@Override
+	public String bookSeat(int routeId,int userId, int busId, int[] seats, String source, String destination, String busType,
+			int amount,LocalDate traveldate) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		LocalDate bookDate=LocalDate.now();
+
+		int rowCount=jdbcTemplate.update(ADDBOOKING,userId,routeId,busId,seats.length, source, destination, busType,amount,java.sql.Date.valueOf(bookDate));
+		if(rowCount>0){
+			int destvalue=jdbcTemplate.queryForObject(GETDESTVALUE, new Object[]{destination,routeId},Integer.class);
+			for(int i=0;i<seats.length;i++){
+				int updateId=jdbcTemplate.update(UPDATEBOOKEDSEATS,userId,seats[i],busId,java.sql.Date.valueOf(traveldate),destvalue);
+			}
+			return "success";
+		}
+		else{
+			return "failure";
+		}
+		
 	}
 
 }

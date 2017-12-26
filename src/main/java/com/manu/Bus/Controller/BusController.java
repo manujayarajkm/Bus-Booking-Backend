@@ -10,11 +10,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.manu.Bus.POJO.Booking;
 import com.manu.Bus.POJO.Bus;
 import com.manu.Bus.POJO.Seat;
 import com.manu.Bus.POJO.SeatLayout;
@@ -70,5 +73,31 @@ public class BusController {
 		
 		System.out.println("Got the call ");
 		return userService.login(username, password);
+	}
+//	@RequestMapping(value="/bookseats/{routeId}/{userId}/{busId}/{seats}/{source}/{destination}/{busType}/{amount}/{traveldate}",method=RequestMethod.GET)
+//	public String bookSeats(@PathVariable int  routeId,@PathVariable int userId,@PathVariable int busId,@PathVariable int[] seats,@PathVariable String source,
+//			@PathVariable String destination,@PathVariable String busType,@PathVariable int amount,@PathVariable String traveldate) throws SQLException, ClassNotFoundException {
+//		// TODO Auto-generated method stub
+//		
+//		LocalDate localDate = LocalDate.parse(traveldate);
+//		System.out.println("Got the call ");
+//		System.out.println(seats);
+//		return transactionService.bookSeat(routeId, userId, busId, seats, source, destination, busType, amount, localDate);
+//	}
+	@RequestMapping(value="/bookseats",method=RequestMethod.POST,consumes="application/json")
+	public String sendMail(@RequestBody Booking bookingObj,Model model) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		System.out.println(bookingObj);
+		int routeId=bookingObj.getRouteId();
+		int userid=bookingObj.getUserId();
+		int busId=bookingObj.getBusId();
+		int[] seats=bookingObj.getSeats();
+		String source=bookingObj.getSource();
+		String destination=bookingObj.getDestination();
+		String busType=bookingObj.getBusType();
+		int amount=bookingObj.getAmount();
+		String date=bookingObj.getBookingDate();
+		LocalDate ldate=LocalDate.parse(date);
+		return transactionService.bookSeat(routeId, userid, busId, seats, source, destination, busType, amount, ldate);
 	}
 }

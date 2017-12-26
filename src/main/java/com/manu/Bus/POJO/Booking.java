@@ -1,5 +1,6 @@
 package com.manu.Bus.POJO;
 
+import java.util.Arrays;
 import java.util.Date;
 
 public class Booking {
@@ -13,12 +14,13 @@ public class Booking {
 	private String destination;
 	private String busType;
 	private int amount;
-	private Date bookingDate;
+	private int[] seats;
+	private String bookingDate;
 	public Booking() {
 		super();
 	}
 	public Booking(int bookingId, int userId, int routeId, int busId, int noOfSeats, String source, String destination,
-			String busType, int amount, Date bookingDate) {
+			String busType, int amount, String bookingDate,int[] seats) {
 		super();
 		this.bookingId = bookingId;
 		this.userId = userId;
@@ -30,6 +32,7 @@ public class Booking {
 		this.busType = busType;
 		this.amount = amount;
 		this.bookingDate = bookingDate;
+		this.seats=seats;
 	}
 	public int getBookingId() {
 		return bookingId;
@@ -85,17 +88,25 @@ public class Booking {
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
-	public Date getBookingDate() {
+	public String getBookingDate() {
 		return bookingDate;
 	}
-	public void setBookingDate(Date bookingDate) {
+	public void setBookingDate(String bookingDate) {
 		this.bookingDate = bookingDate;
+	}
+	public int[] getSeats() {
+		return seats;
+	}
+	public void setSeats(int[] seats) {
+		this.seats = seats;
 	}
 	@Override
 	public String toString() {
 		return "Booking [bookingId=" + bookingId + ", userId=" + userId + ", routeId=" + routeId + ", busId=" + busId
 				+ ", noOfSeats=" + noOfSeats + ", source=" + source + ", destination=" + destination + ", busType="
-				+ busType + ", amount=" + amount + ", bookingDate=" + bookingDate + "]";
+				+ busType + ", amount=" + amount + ", seats=" + Arrays.toString(seats) + ", bookingDate=" + bookingDate
+				+ "]";
 	}
+	
 
 }

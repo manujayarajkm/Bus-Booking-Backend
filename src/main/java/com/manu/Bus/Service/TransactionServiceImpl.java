@@ -37,4 +37,11 @@ public class TransactionServiceImpl implements TransactionService {
 		return transactionDAO.destvalue(destination, routeId);
 	}
 
+	@Override
+	public String bookSeat(int routeId, int userId, int busId, int[] seats, String source, String destination,
+			String busType, int amount, LocalDate traveldate) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		return transactionDAO.bookSeat(routeId, userId, busId, seats, source, destination, busType, amount, traveldate);
+	}
+
 }
