@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.manu.Bus.Data.TransactionDAO;
 import com.manu.Bus.POJO.Bus;
+import com.manu.Bus.POJO.Passenger;
 import com.manu.Bus.POJO.SeatLayout;
 
 @Service
@@ -42,6 +43,12 @@ public class TransactionServiceImpl implements TransactionService {
 			String busType, int amount, LocalDate traveldate) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		return transactionDAO.bookSeat(routeId, userId, busId, seats, source, destination, busType, amount, traveldate);
+	}
+
+	@Override
+	public String addPassenger(Passenger[] passenger) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		return transactionDAO.addPassenger(passenger);
 	}
 
 }

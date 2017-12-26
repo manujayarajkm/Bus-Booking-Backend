@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.manu.Bus.POJO.Booked_Seats;
 import com.manu.Bus.POJO.Bus;
+import com.manu.Bus.POJO.Passenger;
 import com.manu.Bus.POJO.SeatLayout;
 import com.manu.Bus.POJO.Stops;
 
@@ -40,7 +41,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 	private final static String GETDESTVALUE="select stop_value from stops where stop_name=? && route_id=?";
 	private final static String ADDBOOKING="insert into booking (user_id,route_id,bus_id,no_of_seats_booked,source,destination,bus_type,total_amount,booking_date) values(?,?,?,?,?,?,?,?,?)";
 	private final static String UPDATEBOOKEDSEATS="insert into booked_seats (user_id,seat_no,bus_id,travel_date,dest_value) values(?,?,?,?,?)";
-
+	private final static String UPDATEPASSENGER="insert into passenger(passenger_name,passenger_gender,passenger_age,booking_id) values(?,?,?,?)";
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -258,6 +259,22 @@ public class TransactionDAOImpl implements TransactionDAO {
 			return "failure";
 		}
 		
+	}
+
+	@Override
+	public String addPassenger(Passenger[] passenger) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		int rowCount=0;
+		for(int i=0;i<passenger.length;i++){
+			rowCount=jdbcTemplate.update(UPDATEPASSENGER,passenger[i].getPassengerName(),passenger[i].getPassengerGender(),passenger[i].getPassengerAge(),passenger[i].getBookingId());
+		}
+		if(rowCount>0){
+			return "success";
+		}
+		else
+		{
+			return "failed";
+		}
 	}
 
 }

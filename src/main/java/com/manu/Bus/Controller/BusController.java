@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.manu.Bus.POJO.Booking;
 import com.manu.Bus.POJO.Bus;
+import com.manu.Bus.POJO.Passenger;
 import com.manu.Bus.POJO.Seat;
 import com.manu.Bus.POJO.SeatLayout;
 import com.manu.Bus.POJO.User;
@@ -85,7 +86,7 @@ public class BusController {
 //		return transactionService.bookSeat(routeId, userId, busId, seats, source, destination, busType, amount, localDate);
 //	}
 	@RequestMapping(value="/bookseats",method=RequestMethod.POST,consumes="application/json")
-	public String sendMail(@RequestBody Booking bookingObj,Model model) throws SQLException, ClassNotFoundException {
+	public String bookSeats(@RequestBody Booking bookingObj,Model model) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		System.out.println(bookingObj);
 		int routeId=bookingObj.getRouteId();
@@ -99,5 +100,12 @@ public class BusController {
 		String date=bookingObj.getBookingDate();
 		LocalDate ldate=LocalDate.parse(date);
 		return transactionService.bookSeat(routeId, userid, busId, seats, source, destination, busType, amount, ldate);
+	}
+	@RequestMapping(value="/addpassenger",method=RequestMethod.POST,consumes="application/json")
+	public String addPassenger(@RequestBody Passenger[] passengerObj,Model model) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		System.out.println(passengerObj);
+		
+		return transactionService.addPassenger(passengerObj);
 	}
 }
