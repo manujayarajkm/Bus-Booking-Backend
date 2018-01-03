@@ -116,7 +116,26 @@ public class TransactionDAOImpl implements TransactionDAO {
 			System.out.println("bus type "+busType);
 			int fare=calculateFare(busType,distance);
 			Float startTime=bus.get(i).getStartTime();
-			bus.get(i).setReachTime(startTime+destTime);
+			float value=startTime+destTime;
+//			int hours = (int) duration;
+//            int minutes = (int) (60 * (duration - hours));
+//            System.out.println("after conversion "+hours+"."+minutes);
+			
+			System.out.println(value);
+
+			int hours = (int) value;
+			if(hours>23){
+				hours-=24;
+			}
+			int fraction=(int)((value % 1)*100);	
+			if(fraction>59){
+				fraction-=60;
+				hours++;
+			}
+			String tt=hours+"."+fraction;
+			float time2=Float.valueOf(tt);
+			
+			bus.get(i).setReachTime(time2);
 			bus.get(i).setCost(fare);
 		}
 		System.out.println(bus);

@@ -22,6 +22,7 @@ import com.manu.Bus.POJO.Bus;
 import com.manu.Bus.POJO.Passenger;
 import com.manu.Bus.POJO.Seat;
 import com.manu.Bus.POJO.SeatLayout;
+import com.manu.Bus.POJO.Time;
 import com.manu.Bus.POJO.User;
 import com.manu.Bus.Service.TransactionService;
 import com.manu.Bus.Service.UserService;
@@ -109,4 +110,27 @@ public class BusController {
 		
 		return transactionService.addPassenger(passengerObj);
 	}
+	@RequestMapping(value="/convert",method=RequestMethod.POST,consumes="application/json")
+	public String timeconvert(@RequestBody Time timeObj,Model model) throws SQLException, ClassNotFoundException {
+		// TODO Auto-generated method stub
+		System.out.println(timeObj.getTime());
+		float value=timeObj.getTime();
+		System.out.println(value);
+
+		int hours = (int) value;
+		if(hours>23){
+			hours-=24;
+		}
+		int fraction=(int)((value % 1)*100);	
+		if(fraction>59){
+			fraction-=60;
+			hours++;
+		}
+		System.out.println(hours+"."+fraction);
+
+
+		return null;
+	}
+	
+	
 }
