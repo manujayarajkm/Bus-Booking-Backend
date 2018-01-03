@@ -45,7 +45,7 @@ public class BusController {
 	public List<SeatLayout> getSeatLayout(@PathVariable int busId,@PathVariable int destValue,@PathVariable String travelDate) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		
-		
+		//DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-mm-yyyy");
 		LocalDate localDate = LocalDate.parse(travelDate); 
 		
 		System.out.println("Got the call "+localDate);
@@ -86,7 +86,7 @@ public class BusController {
 //		return transactionService.bookSeat(routeId, userId, busId, seats, source, destination, busType, amount, localDate);
 //	}
 	@RequestMapping(value="/bookseats",method=RequestMethod.POST,consumes="application/json")
-	public String bookSeats(@RequestBody Booking bookingObj,Model model) throws SQLException, ClassNotFoundException {
+	public int bookSeats(@RequestBody Booking bookingObj,Model model) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		System.out.println(bookingObj);
 		int routeId=bookingObj.getRouteId();
@@ -100,9 +100,10 @@ public class BusController {
 		String date=bookingObj.getBookingDate();
 		LocalDate ldate=LocalDate.parse(date);
 		return transactionService.bookSeat(routeId, userid, busId, seats, source, destination, busType, amount, ldate);
+		
 	}
 	@RequestMapping(value="/addpassenger",method=RequestMethod.POST,consumes="application/json")
-	public String addPassenger(@RequestBody Passenger[] passengerObj,Model model) throws SQLException, ClassNotFoundException {
+	public String addPassenger(@RequestBody Passenger passengerObj,Model model) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		System.out.println(passengerObj);
 		

@@ -39,14 +39,14 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	@Override
-	public String bookSeat(int routeId, int userId, int busId, int[] seats, String source, String destination,
+	public int bookSeat(int routeId, int userId, int busId, int[] seats, String source, String destination,
 			String busType, int amount, LocalDate traveldate) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		return transactionDAO.bookSeat(routeId, userId, busId, seats, source, destination, busType, amount, traveldate);
 	}
 
 	@Override
-	public String addPassenger(Passenger[] passenger) throws SQLException, ClassNotFoundException {
+	public String addPassenger(Passenger passenger) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		return transactionDAO.addPassenger(passenger);
 	}

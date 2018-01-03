@@ -13,6 +13,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.manu.Bus.POJO.Booked_Seats;
@@ -42,7 +44,10 @@ public class TransactionDAOImpl implements TransactionDAO {
 	private final static String ADDBOOKING="insert into booking (user_id,route_id,bus_id,no_of_seats_booked,source,destination,bus_type,total_amount,booking_date) values(?,?,?,?,?,?,?,?,?)";
 	private final static String UPDATEBOOKEDSEATS="insert into booked_seats (user_id,seat_no,bus_id,travel_date,dest_value) values(?,?,?,?,?)";
 	private final static String UPDATEPASSENGER="insert into passenger(passenger_name,passenger_gender,passenger_age,booking_id) values(?,?,?,?)";
+	private final static String GETROUETID="select route_id from bus where bus_id=?";
+	private final static String GETBOOKINGID="select booking_id from booking order by booking_id desc limit 1";
 
+	
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
@@ -154,7 +159,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 			for(int j=0;j<booked_seats.size();j++){
 				System.out.println("inside j loop");
 			if(seats.get(i)==booked_seats.get(j).getSeatNo()){
-				System.out.println("found seat number match " +booked_seats.get(j).getSeatNo());
+				System.out.println("found seat number match " +booked_seats.get(j).getSeatNo()+booked_seats.get(j).getDestValue());
 				if(booked_seats.get(j).getDestValue()<=sourceValue){
 					System.out.println("found a possible vaccant seat "+booked_seats.get(j).getSeatNo()+booked_seats.get(j).getDestValue()+sourceValue);
 				//seatLayout.get(i).setSeatStatus("available");
@@ -242,32 +247,36 @@ public class TransactionDAOImpl implements TransactionDAO {
 	}
 
 	@Override
-	public String bookSeat(int routeId,int userId, int busId, int[] seats, String source, String destination, String busType,
+	public int bookSeat(int routeId,int userId, int busId, int[] seats, String source, String destination, String busType,
 			int amount,LocalDate traveldate) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		LocalDate bookDate=LocalDate.now();
+		
 
+		int routeId2=jdbcTemplate.queryForObject(GETROUETID, new Object[]{busId},Integer.class);
+		
 		int rowCount=jdbcTemplate.update(ADDBOOKING,userId,routeId,busId,seats.length, source, destination, busType,amount,java.sql.Date.valueOf(bookDate));
+		int bookingId=jdbcTemplate.queryForObject(GETBOOKINGID, new Object[]{},Integer.class);
 		if(rowCount>0){
 			int destvalue=jdbcTemplate.queryForObject(GETDESTVALUE, new Object[]{destination,routeId},Integer.class);
 			for(int i=0;i<seats.length;i++){
 				int updateId=jdbcTemplate.update(UPDATEBOOKEDSEATS,userId,seats[i],busId,java.sql.Date.valueOf(traveldate),destvalue);
 			}
-			return "success";
+			return bookingId;
 		}
 		else{
-			return "failure";
+			return 0;
 		}
 		
 	}
 
 	@Override
-	public String addPassenger(Passenger[] passenger) throws SQLException, ClassNotFoundException {
+	public String addPassenger(Passenger passenger) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		int rowCount=0;
-		for(int i=0;i<passenger.length;i++){
-			rowCount=jdbcTemplate.update(UPDATEPASSENGER,passenger[i].getPassengerName(),passenger[i].getPassengerGender(),passenger[i].getPassengerAge(),passenger[i].getBookingId());
-		}
+		
+			rowCount=jdbcTemplate.update(UPDATEPASSENGER,passenger.getPassengerName(),passenger.getPassengerGender(),passenger.getPassengerAge(),passenger.getBookingId());
+		
 		if(rowCount>0){
 			return "success";
 		}
