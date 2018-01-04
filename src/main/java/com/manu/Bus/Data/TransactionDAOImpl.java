@@ -3,8 +3,10 @@ package com.manu.Bus.Data;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +32,8 @@ public class TransactionDAOImpl implements TransactionDAO {
 	private final static String GETDESTROUTES="SELECT route_id,stop_value,distance_from_origin,time_from_origin FROM stops where stop_name=?";
 	private final static String GETBUSIDS="SELECT bus_id FROM bus_and_route where route_id=?";
 	private final static String GETSEATLAYOUT="select bus.bus_id,bus.bus_name,bus.bus_type,bus.`bus_start_time`,seat.`seat_no`,seat.`seat_status`,seat.booked_value from bus INNER JOIN seat ON seat.`bus_id`=bus.bus_id and bus.`bus_id`=?;";
-	private final static String GETBUSSES="SELECT * FROM bus where route_id=? && bus_start_time>?";
+	private final static String GETBUSSESTODAY="SELECT * FROM bus where route_id=? && bus_start_time>?";
+	private final static String GETBUSSES="SELECT * FROM bus where route_id=? ";
 	private final static String GETNOOFSEATS="SELECT count(seat_no) FROM seat where bus_id=?";
 	private final static String GETSEATSTATUS="select `booked_seats_id` from booked_seats where bus_id=? and `seat_no`=? and `travel_date`=?";
 	private final static String GETBOOKEDSEATS="select * from booked_seats where bus_id=?";
@@ -52,27 +55,30 @@ public class TransactionDAOImpl implements TransactionDAO {
 	JdbcTemplate jdbcTemplate;
 
 	@Override
-	public List<Bus> getAvailableBusses(String source, String destination)
+	public List<Bus> getAvailableBusses(String source, String destination,LocalDate travelDate)
 			throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		List<Integer> rIds=new ArrayList();
 		List<Integer> busIds=new ArrayList();
 		List<SeatLayout> seatLayout=new ArrayList();
 		List<Bus> bus=new ArrayList();
+		
+// Getting the list of routes which satisfies the source 
+		
 		List<Stops> sourcestops=jdbcTemplate.query(GETSOURCEROUTES,new StopMapper(),source);
 		System.out.println(sourcestops);
+		
+// Getting the list of routes which satisfies the destination 
+		
 		List<Stops> deststops=jdbcTemplate.query(GETDESTROUTES,new StopMapper(),destination);
 		System.out.println(deststops);
+		
+//Filtering the routes which satifies both sorce and destination in order
 		
 		for(int i=0;i<sourcestops.size();i++){
 			for (int j=0;j<deststops.size();j++){
 				if(sourcestops.get(i).getRouteId()==deststops.get(j).getRouteId() && sourcestops.get(i).getStopValue()<deststops.get(j).getStopValue()){
-//					float duration=(deststops.get(j).getTimeWROrigin()-sourcestops.get(i).getTimeWROrigin());
-//					System.out.println("Time is "+duration);
-//					float reachtime=(deststops.get(j).getTimeWROrigin());
-//					System.out.println("Time is "+reachtime);
-//					float distance=(deststops.get(j).getDistanceFromorigin()-sourcestops.get(i).getDistanceFromorigin());
-//					System.out.println("Distance  is "+distance);
+					
 					rIds.add(sourcestops.get(i).getRouteId());
 
 				}
@@ -84,22 +90,28 @@ public class TransactionDAOImpl implements TransactionDAO {
 		String t=format.format(date);
 		float time=Float.parseFloat(t);
 		System.out.println(time);
-//		for(int i=0;i<rIds.size();i++){
-//			System.out.println(rIds.get(i));
-//			int busId=jdbcTemplate.queryForObject(GETBUSIDS, new Object[]{rIds.get(i)},Integer.class);
-//			busIds.add(busId);
-//		}
-//		System.out.println(busIds);
-//		for(int i=0;i<busIds.size();i++){
-//			List<SeatLayout> seatLayout1=new ArrayList();
-//			seatLayout1=jdbcTemplate.query(GETSEATLAYOUT, new SeatLayoutMapper(),busIds.get(i));
-//			seatLayout.addAll(seatLayout1);
-//		}
-//		System.out.println(seatLayout);
+		
+		Instant instant = Instant.ofEpochMilli(date.getTime());
+		LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+		LocalDate todaydate = localDateTime.toLocalDate();
+
 		for(int i=0;i<rIds.size();i++){
 			List<Bus> bus1=new ArrayList();
 			System.out.println(rIds.get(i));
-			bus1=jdbcTemplate.query(GETBUSSES, new BusMapper(),rIds.get(i),time);
+			System.out.println(time);
+			System.out.println("todays date "+todaydate);
+			System.out.println("travel date "+travelDate);
+
+			if(travelDate.equals(todaydate)){
+				System.out.println("inside if check ");
+			bus1=jdbcTemplate.query(GETBUSSESTODAY, new BusMapper(),rIds.get(i),time);
+			}
+			else{
+				System.out.println("inside else ");
+
+				bus1=jdbcTemplate.query(GETBUSSES, new BusMapper(),rIds.get(i));
+			}
+			
 			System.out.println("before time "+bus1);
 			System.out.println("source is "+source);
 			System.out.println("destination is "+destination);
@@ -112,6 +124,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 			System.out.println("Source distance "+sourceDist +"dest distance "+destDist);
 			System.out.println(bus1);
 			bus.addAll(bus1);
+			System.out.println("new bus "+bus1);
 			String busType=bus.get(i).getBusType();
 			System.out.println("bus type "+busType);
 			int fare=calculateFare(busType,distance);

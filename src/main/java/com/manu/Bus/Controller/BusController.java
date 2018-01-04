@@ -36,11 +36,12 @@ public class BusController {
 	@Autowired
 	UserService userService;
 	
-	@RequestMapping(value="/getAvailableBussess/{source}/{dest}",method=RequestMethod.GET)
-	public List<Bus> getAvailableBussess(@PathVariable String source,@PathVariable String dest) throws SQLException, ClassNotFoundException {
+	@RequestMapping(value="/getAvailableBussess/{source}/{dest}/{traveldate}",method=RequestMethod.GET)
+	public List<Bus> getAvailableBussess(@PathVariable String source,@PathVariable String dest,@PathVariable String traveldate) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		System.out.println("Got the call");
-		return transactionService.getAvailableBusses(source, dest);
+		LocalDate localDate = LocalDate.parse(traveldate);
+		return transactionService.getAvailableBusses(source, dest,localDate);
 	}
 	@RequestMapping(value="/getSeatLayout/{busId}/{destValue}/{travelDate}",method=RequestMethod.GET)
 	public List<SeatLayout> getSeatLayout(@PathVariable int busId,@PathVariable int destValue,@PathVariable String travelDate) throws SQLException, ClassNotFoundException {

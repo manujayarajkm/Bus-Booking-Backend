@@ -19,10 +19,10 @@ public class TransactionServiceImpl implements TransactionService {
 	TransactionDAO transactionDAO;
 	
 	@Override
-	public List<Bus> getAvailableBusses(String source, String destination)
+	public List<Bus> getAvailableBusses(String source, String destination,LocalDate traveldate)
 			throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
-		return transactionDAO.getAvailableBusses(source, destination);
+		return transactionDAO.getAvailableBusses(source, destination,traveldate);
 	}
 
 	@Override
