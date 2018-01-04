@@ -54,6 +54,8 @@ public class TransactionDAOImpl implements TransactionDAO {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
+//Getting available buses for the searched route
+	
 	@Override
 	public List<Bus> getAvailableBusses(String source, String destination,LocalDate travelDate)
 			throws SQLException, ClassNotFoundException {
@@ -66,12 +68,12 @@ public class TransactionDAOImpl implements TransactionDAO {
 // Getting the list of routes which satisfies the source 
 		
 		List<Stops> sourcestops=jdbcTemplate.query(GETSOURCEROUTES,new StopMapper(),source);
-		System.out.println(sourcestops);
+		//System.out.println(sourcestops);
 		
 // Getting the list of routes which satisfies the destination 
 		
 		List<Stops> deststops=jdbcTemplate.query(GETDESTROUTES,new StopMapper(),destination);
-		System.out.println(deststops);
+		//System.out.println(deststops);
 		
 //Filtering the routes which satifies both sorce and destination in order
 		
@@ -84,7 +86,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 				}
 			}
 		}
-		System.out.println(rIds);
+		//System.out.println(rIds);
 		Date date = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("HH.mm");
 		String t=format.format(date);
@@ -97,24 +99,26 @@ public class TransactionDAOImpl implements TransactionDAO {
 
 		for(int i=0;i<rIds.size();i++){
 			List<Bus> bus1=new ArrayList();
-			System.out.println(rIds.get(i));
-			System.out.println(time);
-			System.out.println("todays date "+todaydate);
-			System.out.println("travel date "+travelDate);
-
+			//System.out.println(rIds.get(i));
+			//System.out.println(time);
+			//System.out.println("todays date "+todaydate);
+			//System.out.println("travel date "+travelDate);
+			
+//checking if user is searching for todays busses
+			
 			if(travelDate.equals(todaydate)){
-				System.out.println("inside if check ");
+				//System.out.println("inside if check ");
 			bus1=jdbcTemplate.query(GETBUSSESTODAY, new BusMapper(),rIds.get(i),time);
 			}
 			else{
-				System.out.println("inside else ");
+				//System.out.println("inside else ");
 
 				bus1=jdbcTemplate.query(GETBUSSES, new BusMapper(),rIds.get(i));
 			}
 			
-			System.out.println("before time "+bus1);
-			System.out.println("source is "+source);
-			System.out.println("destination is "+destination);
+			//System.out.println("before time "+bus1);
+			//System.out.println("source is "+source);
+			//System.out.println("destination is "+destination);
 			float sourceTime=jdbcTemplate.queryForObject(GETSOURCETIME, new Object[]{rIds.get(i),source},Float.class);
 			float destTime=jdbcTemplate.queryForObject(GETDESTTIME, new Object[]{rIds.get(i),destination},Float.class);
 			System.out.println("Source time "+sourceTime +"dest time "+destTime);
@@ -135,7 +139,9 @@ public class TransactionDAOImpl implements TransactionDAO {
 //            System.out.println("after conversion "+hours+"."+minutes);
 			
 			System.out.println(value);
-
+			
+//converting time in float to actual time
+			
 			int hours = (int) value;
 			if(hours>23){
 				hours-=24;
@@ -157,6 +163,8 @@ public class TransactionDAOImpl implements TransactionDAO {
 		return bus;
 	}
 
+//Getting the seat Layout	
+	
 	@Override
 	public List<SeatLayout> getSeatStatus(int busId,int sourceValue,LocalDate travelDate) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
@@ -167,11 +175,14 @@ public class TransactionDAOImpl implements TransactionDAO {
 		List<Integer> booked=new ArrayList();
 		List<Integer> willAvailable=new ArrayList();
 		System.out.println("no of seats "+noOfSeats);
+		
+//Checking if the any seat is already booked for the same date		
+		
 		for(int i=1;i<=noOfSeats;i++){
-			System.out.println("Inside for loop "+i);
+			//System.out.println("Inside for loop "+i);
 			try{
-				System.out.println("Inside try");
-				System.out.println("Date is "+travelDate);
+				//System.out.println("Inside try");
+				//System.out.println("Date is "+travelDate);
 			int seatId=jdbcTemplate.queryForObject(GETSEATSTATUS, new Object[]{busId,i,travelDate},Integer.class);
 			System.out.println(seatId);
 			seats.add(i);
@@ -186,6 +197,9 @@ public class TransactionDAOImpl implements TransactionDAO {
 		System.out.println("available seats array "+availSeats);
 		List<SeatLayout> seatLayout=jdbcTemplate.query(GETSEATLAYOUT,new SeatLayoutMapper(),busId);
 		List<Booked_Seats> booked_seats=jdbcTemplate.query(GETBOOKEDSEATS,new BookedSeatsMpper(),busId);
+		
+//Checking for the possibility of a vaccant seat if it is already reserved
+		
 		for(int i=0;i<seats.size();i++){
 			System.out.println("inside i loop");
 			for(int j=0;j<booked_seats.size();j++){
@@ -216,6 +230,9 @@ public class TransactionDAOImpl implements TransactionDAO {
 //			}
 //			}
 //		}
+		
+//Assigning status for the seats(available or booked)		
+		
 		for(int i=0;i<seatLayout.size();i++){
 			for(int j=0;j<availSeats.size();j++){
 				if(seatLayout.get(i).getSeatNo()==availSeats.get(j)){
@@ -241,6 +258,8 @@ public class TransactionDAOImpl implements TransactionDAO {
 		return seatLayout;
 	}
 
+//Assigning fare according to bus type	
+	
 	@Override
 	public int calculateFare(String busType, int distance) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
@@ -271,6 +290,9 @@ public class TransactionDAOImpl implements TransactionDAO {
 		return totalrate;
 	}
 
+	
+//Returning the value corresponding to destination	
+	
 	@Override
 	public int destvalue(String destination,int routeId) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
@@ -278,6 +300,8 @@ public class TransactionDAOImpl implements TransactionDAO {
 		return destValue;
 	}
 
+//Booking seats	
+	
 	@Override
 	public int bookSeat(int routeId,int userId, int busId, int[] seats, String source, String destination, String busType,
 			int amount,LocalDate traveldate) throws SQLException, ClassNotFoundException {
@@ -302,6 +326,8 @@ public class TransactionDAOImpl implements TransactionDAO {
 		
 	}
 
+//Adding passenger details	
+	
 	@Override
 	public String addPassenger(Passenger passenger) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub

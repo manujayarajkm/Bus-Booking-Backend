@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.manu.Bus.POJO.Booking;
 import com.manu.Bus.POJO.Bus;
+import com.manu.Bus.POJO.Login;
 import com.manu.Bus.POJO.Passenger;
 import com.manu.Bus.POJO.Seat;
 import com.manu.Bus.POJO.SeatLayout;
@@ -69,13 +70,13 @@ public class BusController {
 		System.out.println("Got the call ");
 		return transactionService.destvalue(destination, routeId);
 	}
-	@RequestMapping(value="/login/{username}/{password}",method=RequestMethod.GET)
-	public User login(@PathVariable String username,@PathVariable String password) throws SQLException, ClassNotFoundException {
+	@RequestMapping(value="/login",method=RequestMethod.POST,consumes="application/json")
+	public User login(@RequestBody Login loginObj,Model model) throws SQLException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		
 		
 		System.out.println("Got the call ");
-		return userService.login(username, password);
+		return userService.login(loginObj.getUsername(), loginObj.getPassword());
 	}
 //	@RequestMapping(value="/bookseats/{routeId}/{userId}/{busId}/{seats}/{source}/{destination}/{busType}/{amount}/{traveldate}",method=RequestMethod.GET)
 //	public String bookSeats(@PathVariable int  routeId,@PathVariable int userId,@PathVariable int busId,@PathVariable int[] seats,@PathVariable String source,
